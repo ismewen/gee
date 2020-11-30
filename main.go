@@ -2,6 +2,7 @@ package main
 
 import (
 	"gee"
+	"github.com/davecgh/go-spew/spew"
 	"net/http"
 )
 
@@ -12,8 +13,11 @@ func main() {
 	})
 
 	r.GET("/hello", func(c *gee.Context) {
-		print(c.Query("name"))
 		c.String(http.StatusOK, "hello %s, your're at %s\n", c.Query("name"), c.Path)
+	})
+
+	r.GET("/hello/:name", func(c *gee.Context) {
+		c.String(http.StatusOK, "hello %s, you'r at %s", c.Path)
 	})
 
 	r.POST("/login", func(c *gee.Context) {
@@ -22,6 +26,7 @@ func main() {
 			"password": c.PostForm("password"),
 		})
 	})
-
+	r.ShowParts()
+	spew.Dump(r)
 	r.Run(":9999")
 }

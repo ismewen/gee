@@ -11,9 +11,15 @@ type H map[string]interface{}
 type Context struct {
 	Writer     http.ResponseWriter
 	Req        *http.Request
+	Params     map[string]string
 	Path       string
 	Method     string
 	StatusCode int
+}
+
+func (c *Context) Param(key string) string {
+	value, _ := c.Params[key]
+	return value
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {

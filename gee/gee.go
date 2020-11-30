@@ -34,3 +34,10 @@ func (engine Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func (engine *Engine) Run(addr string) (err error) {
 	return http.ListenAndServe(addr, engine)
 }
+
+func (engine *Engine) ShowParts(){
+	print("**********")
+	for _, root := range engine.router.roots{
+		root.showAllPath()
+	}
+}
