@@ -2,31 +2,35 @@ package main
 
 import (
 	"gee"
-	"github.com/davecgh/go-spew/spew"
 	"net/http"
 )
 
 func main() {
 	r := gee.New()
-	r.GET("/", func(c *gee.Context) {
-		c.HTMl(http.StatusOK, "hello ismewen")
+	r.GET("/index", func(o *gee.Context) {
+		o.String(http.StatusOK, "index")
 	})
 
-	r.GET("/hello", func(c *gee.Context) {
-		c.String(http.StatusOK, "hello %s, your're at %s\n", c.Query("name"), c.Path)
-	})
-
-	r.GET("/hello/:name", func(c *gee.Context) {
-		c.String(http.StatusOK, "hello %s, you'r at %s", c.Path)
-	})
-
-	r.POST("/login", func(c *gee.Context) {
-		c.JSON(http.StatusOK, gee.H{
-			"username": c.PostForm("username"),
-			"password": c.PostForm("password"),
+	v1 := r.Group("/v1")
+	{
+		v1.GET("/hello", func(o *gee.Context) {
+			o.String(http.StatusOK, "v1 hello")
 		})
+
+		v1.GET("/hello/:name", func(c *gee.Context) {
+			c.String(http.StatusOK, "hello"+c.Params["name"])
+		})
+	}
+
+	v1.GET("/", func(c *gee.Context) {
+		c.String(http.StatusOK, "v1 index")
 	})
-	r.ShowParts()
-	spew.Dump(r)
+
+	v2 := r.Group("/v2")
+	{
+		v2.GET("/", func(c *gee.Context) {
+			c.String(http.StatusOK, "")
+		})
+	}
 	r.Run(":9999")
 }
