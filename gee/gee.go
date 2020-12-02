@@ -76,8 +76,6 @@ func (engine Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			middlewwares = append(middlewwares, group.middlewares...)
 		}
 	}
-	print("middasdfasdf")
-	print(middlewwares)
 	c := newContext(w, req)
 	c.handlers = middlewwares
 	engine.router.handle(c)
