@@ -26,6 +26,7 @@ func main() {
 
 	v1 := r.Group("/v1")
 	v1.Use(gee.Logger())
+	v1.Use(gee.Recovery())
 	{
 		v1.GET("/hello", func(o *gee.Context) {
 			o.String(http.StatusOK, "v1 hello")
@@ -40,12 +41,17 @@ func main() {
 		c.String(http.StatusOK, "v1 index")
 	})
 
+	v1.GET("/pannic", func(c *gee.Context) {
+		names := []string{"ismewen"}
+		c.String(http.StatusOK, names[100])
+	})
+
 	v2 := r.Group("/v2")
 	{
 		v2.GET("/", func(c *gee.Context) {
 			c.String(http.StatusOK, "")
 		})
 	}
-	v2.Use(onlyForV2())
+	v2.Use(onlyForV2(), gee.Recovery())
 	r.Run(":9999")
 }
