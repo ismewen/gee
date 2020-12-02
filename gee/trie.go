@@ -2,7 +2,6 @@ package gee
 
 import (
 	"strings"
-	"github.com/davecgh/go-spew/spew"
 )
 
 type node struct {
@@ -25,7 +24,6 @@ func (n *node) matchChild(part string) *node {
 // 所有匹配成功的节点
 func (n *node) matchChildren(part string) []*node {
 	nodes := make([]*node, 0)
-	spew.Dump(n.children, part)
 	for _, child := range n.children {
 		print("here \n")
 		print(child.part, "\n")
@@ -34,8 +32,6 @@ func (n *node) matchChildren(part string) []*node {
 			nodes = append(nodes, child)
 		}
 	}
-	print("what is nodes \n")
-	print(nodes)
 	return nodes
 }
 
@@ -62,14 +58,8 @@ func (n *node) search(parts []string, height int) *node {
 		}
 		return n
 	}
-	print("1****\n")
-	spew.Dump(parts, height)
-	print("2****\n")
 	part := parts[height]
-	spew.Dump(part, n)
-	print("3****\n")
 	children := n.matchChildren(part)
-	spew.Dump(n)
 	for _, child := range children {
 		print("range children\n")
 		print(child)

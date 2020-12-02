@@ -3,6 +3,7 @@ package gee
 import (
 	"log"
 	"net/http"
+	"strings"
 )
 
 type HandlerFunc func(c *Context)
@@ -34,6 +35,7 @@ func (group *RouterGroup) Group(prefix string) *RouterGroup {
 		parent: group,
 		engine: engine,
 	}
+	engine.groups = append(engine.groups, newGroup)
 	return newGroup
 }
 
@@ -63,9 +65,21 @@ func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	group.addRoute("POST", pattern, handler)
 }
 
-
 func (engine Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middlewwares []HandlerFunc
+	for _, group := range engine.groups {
+		print("serverhttp****")
+		log.Println(req.URL.Path, group.prefix)
+		log.Println(strings.HasPrefix(req.URL.Path, group.prefix))
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			log.Println("add middlewwares", group, group.middlewares)
+			middlewwares = append(middlewwares, group.middlewares...)
+		}
+	}
+	print("middasdfasdf")
+	print(middlewwares)
 	c := newContext(w, req)
+	c.handlers = middlewwares
 	engine.router.handle(c)
 }
 
@@ -78,4 +92,8 @@ func (engine *Engine) ShowParts() {
 	for _, root := range engine.router.roots {
 		root.showAllPath()
 	}
+}
+
+func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
 }

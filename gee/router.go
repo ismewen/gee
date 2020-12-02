@@ -41,10 +41,11 @@ func (r *router) handle(c *Context) {
 	if n != nil {
 		c.Params = params
 		key = c.Method + "-" + n.pattern
-		r.handlers[key](c)
+		c.handlers = append(c.handlers, r.handlers[key])
 	} else {
 		c.String(http.StatusNotFound, "404 not found")
 	}
+	c.Next()
 }
 
 func (r *router) addRoute(method string, pattern string, handler HandlerFunc) {
@@ -65,18 +66,12 @@ func (r *router) getRoute(method string, path string) (*node, map[string]string)
 	searchParts := parsePattern(path)
 	params := make(map[string]string)
 
-	print("get route\n")
-	for _, part := range searchParts{
-		print(part)
-	}
 	root, ok := r.roots[method]
 
 	if !ok {
 		return nil, nil
 	}
 	n := root.search(searchParts, 0)
-	print("search res\n")
-	print(n)
 	if n != nil {
 		parts := parsePattern(n.pattern)
 		for index, part := range parts {
